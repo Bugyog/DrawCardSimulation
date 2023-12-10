@@ -9,8 +9,6 @@ import java.util.List;
 @RequiredArgsConstructor
 abstract class PlayableCard extends AbstractCard {
 
-    private final Hand hand;
-    private final Deck deck;
     private final int searchQuantity;
     private final int drawQuantity;
     private final List<CardType> searchList;
@@ -21,7 +19,7 @@ abstract class PlayableCard extends AbstractCard {
     }
 
     @Override
-    public void play() {
+    public void play(Hand hand, Deck deck) {
         hand.remove(this);
         List<Card> foundCards = deck.search(searchQuantity, drawQuantity, searchList);
         hand.add(foundCards);

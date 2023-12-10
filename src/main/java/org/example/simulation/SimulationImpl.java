@@ -1,7 +1,7 @@
 package org.example.simulation;
 
 import lombok.RequiredArgsConstructor;
-import org.example.Configuration;
+import org.example.deck.DeckFactory;
 import org.example.game.Game;
 
 import java.math.BigDecimal;
@@ -10,22 +10,23 @@ import java.util.TreeMap;
 import java.util.stream.LongStream;
 
 import static java.math.RoundingMode.HALF_UP;
+import static org.example.Configuration.ITERATIONS;
 
 @RequiredArgsConstructor
 class SimulationImpl implements Simulation {
 
     private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
-    private final Configuration configuration;
     private final Map<Integer, Long> results = new TreeMap<>();
+    private final DeckFactory deckFactory;
 
     @Override
     public void simulate() {
-        LongStream.range(0, configuration.getIterations()).forEach((it) -> playGame());
+        LongStream.range(0, ITERATIONS).forEach((it) -> playGame());
         printResults();
     }
 
     private void playGame() {
-        Game game = Game.of(configuration);
+        Game game = Game.of(deckFactory);
         int round = game.play();
         results.merge(round, 1L, Long::sum);
     }
@@ -35,7 +36,7 @@ class SimulationImpl implements Simulation {
 
         for (Map.Entry<Integer, Long> result: results.entrySet()) {
             sum += result.getValue();
-            BigDecimal probability = calculateProbability(sum, configuration.getIterations());
+            BigDecimal probability = calculateProbability(sum);
             System.out.println(result.getKey() + " - " + probability);
 
             if (probability.equals(ONE_HUNDRED)) {
@@ -44,8 +45,8 @@ class SimulationImpl implements Simulation {
         }
     }
 
-    private BigDecimal calculateProbability(long sum, long iterations) {
+    private BigDecimal calculateProbability(long sum) {
         BigDecimal frequency = BigDecimal.valueOf(sum);
-        return frequency.multiply(ONE_HUNDRED).divide(BigDecimal.valueOf(iterations), 2, HALF_UP);
+        return frequency.multiply(ONE_HUNDRED).divide(BigDecimal.valueOf(ITERATIONS), 2, HALF_UP);
     }
 }

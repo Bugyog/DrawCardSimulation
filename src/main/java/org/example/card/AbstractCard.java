@@ -1,5 +1,8 @@
 package org.example.card;
 
+import org.example.deck.Deck;
+import org.example.hand.Hand;
+
 abstract class AbstractCard implements Card {
 
     @Override
@@ -13,7 +16,7 @@ abstract class AbstractCard implements Card {
     }
 
     @Override
-    public void play() {
+    public void play(Hand hand, Deck deck) {
 
     }
 

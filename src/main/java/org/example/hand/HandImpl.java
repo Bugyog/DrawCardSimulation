@@ -1,6 +1,7 @@
 package org.example.hand;
 
 import org.example.card.Card;
+import org.example.deck.Deck;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,9 +30,9 @@ class HandImpl implements Hand {
     }
 
     @Override
-    public void play() {
+    public void play(Deck deck) {
         removeUnplayable();
-        hand.stream().findFirst().ifPresent(Card::play);
+        hand.stream().findFirst().ifPresent(it -> it.play(this, deck));
     }
 
     @Override

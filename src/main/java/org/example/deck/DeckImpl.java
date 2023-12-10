@@ -1,9 +1,7 @@
 package org.example.deck;
 
-import org.example.Configuration;
 import org.example.card.Card;
 import org.example.card.CardType;
-import org.example.hand.Hand;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,43 +10,27 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
+import static org.example.Configuration.*;
 
 class DeckImpl implements Deck {
 
     private final LinkedList<Card> deck = new LinkedList<>();
-    private final Hand hand;
-    private final int startHandSize;
-    private final int replaceQuantity;
-    private final int maxSearchingCardsOnStartHand;
+    private final List<Card> weaknesses;
 
-    DeckImpl(Hand hand, Configuration configuration) {
-        this.hand = hand;
-        this.startHandSize = configuration.getStartHandSize();
-        this.replaceQuantity = configuration.getReplaceQuantity();
-        this.maxSearchingCardsOnStartHand = configuration.getMaxSearchingCardsOnStartHand();
-    }
-
-    @Override
-    public void add(List<Card> cards) {
+    DeckImpl(List<Card> cards, List<Card> weaknesses) {
+        this.weaknesses = weaknesses;
         deck.addAll(cards);
         Collections.shuffle(deck);
     }
 
     @Override
-    public void mulligan(Hand hand) {
-        List<Card> cards = mulligan();
-        //System.out.println("Hand: " + cards);
-        hand.add(cards);
-    }
-
-    private List<Card> mulligan() {
-        List<Card> startCards = draw(startHandSize);
+    public List<Card> mulligan() {
+        List<Card> startCards = draw(START_HAND_SIZE);
         List<Card> cardsToReplace = getCardsToReplace(startCards);
         List<Card> additionalCards = draw(cardsToReplace.size());
-        add(cardsToReplace);
-        //System.out.println("Start cards: " + startCards);
-        //System.out.println("Card to replace: " + cardsToReplace);
-        //System.out.println("Additional cards: " + additionalCards);
+        deck.addAll(cardsToReplace);
+        deck.addAll(weaknesses);
+        Collections.shuffle(deck);
 
         return Stream.of(startCards, additionalCards)
                 .flatMap(Collection::stream)
@@ -57,7 +39,7 @@ class DeckImpl implements Deck {
     }
 
     private List<Card> draw(int quantity) {
-        return Stream.generate(deck::poll)
+        return Stream.generate(this::draw)
                 .limit(quantity)
                 .toList();
     }
@@ -67,7 +49,7 @@ class DeckImpl implements Deck {
         return cards.stream()
                 .filter(not(Card::isWeapon))
                 .filter(not(cardsToRemain::contains))
-                .limit(replaceQuantity)
+                .limit(REPLACE_QUANTITY)
                 .toList();
     }
 
@@ -75,13 +57,13 @@ class DeckImpl implements Deck {
         return cards.stream()
                 .filter(Card::isPlayable)
                 .sorted()
-                .limit(maxSearchingCardsOnStartHand)
+                .limit(MAX_SEARCHING_CARDS_ON_START_HAND)
                 .toList();
     }
 
     @Override
-    public void draw() {
-        hand.add(deck.poll());
+    public Card draw() {
+        return deck.poll();
     }
 
     @Override

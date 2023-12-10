@@ -1,10 +1,11 @@
 package org.example.game;
 
-import org.example.Configuration;
-import org.example.card.CardFactory;
+import org.example.card.Card;
 import org.example.deck.Deck;
 import org.example.deck.DeckFactory;
 import org.example.hand.Hand;
+
+import java.util.List;
 
 class GameImpl implements Game {
 
@@ -12,12 +13,15 @@ class GameImpl implements Game {
     private final Hand hand;
     private final Deck deck;
 
-    GameImpl(Configuration configuration) {
+    GameImpl(DeckFactory deckFactory) {
         this.hand = Hand.createInstance();
-        CardFactory cardFactory = new CardFactory(hand);
-        DeckFactory deckFactory = new DeckFactory(cardFactory, configuration, hand);
         this.deck = deckFactory.create();
-        deck.mulligan(hand);
+        mulligan();
+    }
+
+    private void mulligan() {
+        List<Card> cards = deck.mulligan();
+        hand.add(cards);
     }
 
     @Override
@@ -33,11 +37,16 @@ class GameImpl implements Game {
         round++;
 
         if(hand.containsPlayable()) {
-            hand.play();
+            hand.play(deck);
         } else {
-            deck.draw();
+            draw();
         }
 
-        deck.draw();
+        draw();
+    }
+
+    private void draw() {
+        Card card = deck.draw();
+        hand.add(card);
     }
 }

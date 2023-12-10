@@ -9,7 +9,7 @@ import static java.lang.Integer.MAX_VALUE;
 @RequiredArgsConstructor
 public enum CardType {
 
-    WEAPON(0), UPGRADED_BACKPACK(1), PREPARE_FOR_THE_WORST(2), BACKPACK(3), OTHER(MAX_VALUE);
+    WEAPON(0), UPGRADED_BACKPACK(1), PREPARED_FOR_THE_WORST(2), BACKPACK(3), OTHER(MAX_VALUE);
 
     private final int priority;
 }

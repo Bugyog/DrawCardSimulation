@@ -1,13 +1,11 @@
 package org.example.game;
 
-import org.example.Configuration;
-import org.example.deck.Deck;
-import org.example.hand.Hand;
+import org.example.deck.DeckFactory;
 
 public interface Game {
 
     int play();
-    static Game of(Configuration configuration) {
-        return new GameImpl(configuration);
+    static Game of(DeckFactory deckFactory) {
+        return new GameImpl(deckFactory);
     }
 }
