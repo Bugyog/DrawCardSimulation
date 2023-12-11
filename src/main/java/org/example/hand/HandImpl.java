@@ -3,14 +3,15 @@ package org.example.hand;
 import org.example.card.Card;
 import org.example.deck.Deck;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
+
+import static java.util.function.Predicate.not;
 
 class HandImpl implements Hand {
 
-    public final List<Card> hand = new LinkedList<>();
+    public final List<Card> hand = new ArrayList<>();
 
     @Override
     public void add(List<Card> cards) {
@@ -46,6 +47,6 @@ class HandImpl implements Hand {
     }
 
     private void removeUnplayable() {
-        hand.removeIf(Predicate.not(Card::isPlayable));
+        hand.removeIf(not(Card::isPlayable));
     }
 }

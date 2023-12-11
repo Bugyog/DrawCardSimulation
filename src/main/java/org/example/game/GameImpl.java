@@ -47,6 +47,8 @@ class GameImpl implements Game {
 
     private void draw() {
         Card card = deck.draw();
-        hand.add(card);
+        if (card != null) {
+            hand.add(card);
+        }
     }
 }

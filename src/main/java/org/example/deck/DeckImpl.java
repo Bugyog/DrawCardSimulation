@@ -76,8 +76,8 @@ class DeckImpl implements Deck {
 
     private List<Card> find(int searchQuantity, int drawQuantity, List<CardType> searchList) {
         return deck.stream()
-                .filter(it -> searchList.contains(it.getType()))
                 .limit(searchQuantity)
+                .filter(it -> searchList.contains(it.getType()))
                 .sorted()
                 .limit(drawQuantity)
                 .toList();
