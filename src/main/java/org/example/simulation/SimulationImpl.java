@@ -18,8 +18,6 @@ class SimulationImpl implements Simulation {
     private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
     private final Map<Integer, Long> results = new TreeMap<>();
     private final DeckFactory deckFactory;
-    private long progress = 0;
-    private long nextMileStone = 0;
 
     @Override
     public void simulate() {
@@ -31,16 +29,6 @@ class SimulationImpl implements Simulation {
         Game game = Game.of(deckFactory);
         int round = game.play();
         results.merge(round, 1L, Long::sum);
-        printProgress();
-    }
-
-    private void printProgress() {
-        progress++;
-
-        if (progress >= nextMileStone) {
-            System.out.println(nextMileStone * 100/ITERATIONS + " per cent completed");
-            nextMileStone += ITERATIONS/10;
-        }
     }
 
     private void printResults() {

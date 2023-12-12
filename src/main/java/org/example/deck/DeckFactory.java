@@ -14,22 +14,24 @@ import static org.example.card.CardType.*;
 
 public class DeckFactory {
 
-    private static final Map<CardType, Integer> COMPOSITION = Map.of(
-            WEAPON, WEAPONS,
-            UPGRADED_BACKPACK, UPGRADED_BACKPACKS,
-            PREPARED_FOR_THE_WORST, PREPARED_FOR_THE_WORSTS,
-            BACKPACK, BACKPACKS,
-            OTHER, getOthers()
-    );
+
 
     private final CardFactory cardFactory;
     private final List<Card> cards;
     private final List<Card> weaknesses;
+    private final Map<CardType, Integer> composition;
 
-    public DeckFactory(CardFactory cardFactory) {
+    public DeckFactory(DeckConfiguration configuration, CardFactory cardFactory) {
         this.cardFactory = cardFactory;
-        this.cards = createCards();
         this.weaknesses = createCards(OTHER, WEAKNESSES);
+        this.composition = Map.of(
+                WEAPON, configuration.weapons(),
+                UPGRADED_BACKPACK, configuration.upgradedBackpacks(),
+                PREPARED_FOR_THE_WORST, configuration.preparedForTheWorsts(),
+                BACKPACK, configuration.backpacks(),
+                OTHER, configuration.others()
+        );
+        this.cards = createCards();
     }
 
     public Deck create() {
@@ -37,7 +39,7 @@ public class DeckFactory {
     }
 
     private List<Card> createCards() {
-        return COMPOSITION.entrySet().stream()
+        return composition.entrySet().stream()
                 .map(it -> createCards(it.getKey(), it.getValue()))
                 .flatMap(Collection::stream)
                 .toList();
